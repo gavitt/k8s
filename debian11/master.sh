@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IP=hostname -I | awk '{ print $1 }'
+IP=$(hostname -I | awk '{ print $1 }')
 
 #Pull required containers"
 kubeadm config images pull >/dev/null 2>&1
@@ -9,6 +9,9 @@ kubeadm config images pull >/dev/null 2>&1
 kubeadm init --apiserver-advertise-address=$IP --pod-network-cidr=10.245.0.0/16 >> /root/kubeinit.log 2>/dev/null
 
 #Initialize kubeconfig
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Deploy Calico network"
